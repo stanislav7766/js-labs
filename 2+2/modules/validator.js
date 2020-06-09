@@ -1,12 +1,12 @@
 const NOT_NUMBER = 'Это не число';
 
-const isEmpty = (obj) => Object.keys(obj).length === 0;
-const isNumber = (text) =>
-  !isNaN(text) &&
-  /^(-?[1-9]+\d*([.]\d+)?)$|^(-?0[.]\d*[1-9]+)$|^0$|^0.0$/.test(text);
+const isEmpty = (obj) => Object.keys(obj).length === 0; //проверка объекта пустой он или содержит какие-то свойства
+const isNumber = (text) => !isNaN(text) && /^(-?[1-9]+\d*([.]\d+)?)$|^(-?0[.]\d*[1-9]+)$|^0$|^0.0$/.test(text); // isNumber эта функция, что проверяет является ли переданный текст числом, к примеру "34" -> да, "vmk34vkf" -> нет
 
+//часть 4.3
 export const validateData = (data, errors = {}) => {
-  !isNumber(data.input1) && (errors.input1 = NOT_NUMBER);
+  //и так, мы получили данные, которые нужно нам проверить под наши критерии. Вид данных, как мы помним такой -  data: {input1: some_value, input2: some_value}
+  !isNumber(data.input1) && (errors.input1 = NOT_NUMBER); //логика такая, если some_value не является числом(тоесть пользователь ввел с клавиатуры какие-то символы)то мы в объект errors добавим запись, что к примеру input1 не число, эта запись отобразиться в будущем на экране у пользователя и он поймет, что нужно ввести именно число)
   !isNumber(data.input2) && (errors.input2 = NOT_NUMBER);
-  return { isValid: isEmpty(errors), errors };
+  return { isValid: isEmpty(errors), errors }; // вовращаем мы объект с двумя свойствами errors и isValid. если errors пуст то isValid равен true, иначе false. то есть если пользователь ввел два числа в поля ввода то все хорошо и результат будет {isValid: true,errors:{}}, а если пользователь ввел что-то другое или вообще не вводил ничего в поле ввода, то результат будет таков: {isValid:false,errors: {input1: "Это не число"}} то есть в этом случае пользователь ввел в 1е поле ввода не число а во 2е число
 };

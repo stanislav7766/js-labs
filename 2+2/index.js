@@ -2,56 +2,77 @@ import { validateData } from './modules/validator.js';
 import { sum, insertAfter, isElemExistByID, isElemExistByClassName } from './modules/helpers.js';
 
 const COUNT_INPUTS = 2;
-
+//4.4. как было указано в задании у сообщения "Это не число" должен быть className - error-message, как мы выучили ранее у нас вся страничка в браузере - дерево связей, по этому мы можем легко найти узлы по нужному нам className - error-message, и удалить найденный узел и тогда у пользователя на страничке пропадет надпись "Это не число"
 const clearErrors = () => {
   isElemExistByClassName('error-message') &&
     [...document.getElementsByClassName('error-message')].forEach((elem) => {
       elem.remove();
     });
 };
-
+//все также как и в 4.4, только className - result
 const clearResult = () => {
   isElemExistByID('result') && document.getElementById('result').remove();
 };
-
+//4.6
 const notValidInputs = (errors) => {
+  //если в поля ввода пользватель вводил не валидные числа то нам с validateData возвращается объект с свойствами какое из полей не валидно и с текстом , что нам нужно отобразить под полем ввода(как помним errors может выглядить так {input1: "Это не число",input2:"Это не число"})
   for (const key in errors) {
+    //мы проходимся по errors с помощью цикла for in, он похож на простой for, которой был в части 5. И так key - это наше свойство\ключ (input1,input2)
     if (errors.hasOwnProperty(key)) {
-      const div = document.createElement('div');
-      div.className = 'error-message';
-      div.innerHTML = errors[key];
-      const input = document.getElementById(key);
-      insertAfter(div, input);
+      const div = document.createElement('div'); //создаем новый узел div
+      div.className = 'error-message'; //указываем для этого узла className - error-message, className похож на id , но на страничке может быть много узлов с одинаковым значением className, id только один
+      div.innerHTML = errors[key]; // отображаем на страничке сообщение ("Это не число") которое мы получаем по свойству
+      const input = document.getElementById(key); //и нам опять нужно настроить связи в дереве dom, мы находим узел input1(или input2 в зависимости от того на какой мы итерации в цикле и какой у нас key)
+      insertAfter(div, input); //и приклеиваем после узла поля ввода узел с сообщением "Это не число"
+      //                              было html -> body-> div->input
+      //                                                     ->input
+      //                                                     ->btn
+      //стало html -> body-> div->input
+      //                        -> div c className - error-message
+      //                        ->input
+      //                        ->btn
+      //ну или добавится после 2го инпута или вообще и там и там, в зависимости что вводил пользователь в поля ввода
     }
   }
 };
-
+//4.2
 const getInputsValue = () => {
-  const input1 = document.getElementById('input1');
-  const input2 = document.getElementById('input2');
-  return { input1: input1.value, input2: input2.value };
+  const input1 = document.getElementById('input1'); // document.getElementById, что же это за метод? все просто, мы по уникальному id ищем наш узел, id у него "input1" как помнишь мы сами его и создавали)
+  const input2 = document.getElementById('input2'); //ну тут также
+  return { input1: input1.value, input2: input2.value }; //как раньше мы обусловились функция это последовательность исполнения команд в коде(часть 2), но функция может еще возвращать какой-то результат\значение(как в нашем случае) мы возвращаем объект со значениями, которые мы получили выше
+  //что же такое этот объект, технически это один из типов данных "Object" в языке javascript(всего их 8 сейчас можно тут почитать https://learn.javascript.ru/types), а по факту это удобная структура для хранения каких то данных, логика такая, что у объекта есть свойства по которым можно получить значение, давай посмотрим на наш пример {input1: some_value, input2: some_value}, как видим у нас объект состоит из двух свойств\ключей - input1,input2(для удобства мы зназвали их как и id). при их обращении мы сможем получить их значения(в нашем случае это содержимое, введенное в поле ввода на страничке в браузера)
 };
-
+//4.1  как помним мы говорили о btnListener, эта функция вызывается\срабатывает каждый раз, как пользователь нажимает  кнопку "Посчитать", давай подробнее о том, что тут происходит, так как тут вся основная логика
 const btnListener = () => {
-  const { input1, input2 } = getInputsValue();
+  const { input1, input2 } = getInputsValue(); //тут мы вызываем функцию getInputsValue которая возвращает два значения с каждого поля ввода (смотри 4.2), так как ты прочитала в части 4.2, getInputsValue вернуло объект с нашими значениями с полей ввода, и для удобства мы его "распечатываем" в две переменные input1,input2(програмнная еденица хранения данных), еще  мы могли написать так some_obj = getInputsValue() и тогда чтобы получить значение, к примеру с первого поля ввода, мы бы писали так some_obj.input1. Но удобней использовать такие "распечатывания" если свойств у объекта немного. технически это называется Деструктуризация
   const { isValid, errors } = validateData({
+    //хорошо, теперь нам нужно проверить наши значения с полей ввода, подходят ли они под наши критерии(нам нужны только числа, ни буквы, ни символы .+-№;?:)
     input1,
     input2,
-  });
+  }); // функция validateData вернула нам вновь объект, который мы "распечатали" в части 4.3 я описал , что такое isValid и errors(файл modules/validator.js)
 
-  clearErrors();
-  clearResult();
+  //ниже 2 функции. если пользователь пробовал ранее воспользоваться нашим калькулятором, то на страничке могут быть сообщения с результатом сложения предыдущих чисел , или одно из сообщений, что введеное значение "Не число". нам необходимо очистить эти сообщения перед тем как выводить пользователю что-то новое, если же этих сообщений не было на страничке браузера, то и чистить нечего)
+  clearErrors(); //для очистки сообщений "Это не число" для полей ввода (4.4)
+  clearResult(); // для очистки результата сложения от предыдущих подсчетов (4.5)
 
   if (!isValid) {
-    notValidInputs(errors);
-    return;
-  }
-  const btn = document.getElementById('btn');
-  const result = document.createElement('div');
-  result.setAttribute('id', 'result');
-  result.innerHTML = sum(input1, input2);
-  insertAfter(result, btn);
+    //если isValid равен false(как помним это зависит от того, что мы ввели в поля ввода) то исполнятся две нижние строчки, если нет, то обе пропустятся
+    notValidInputs(errors); //эта функция для того чтобы создать узел с id - error-message и отобразить его на страничке (4.6)
+    return; //если isValid равен false, то тут программа останавливается и код ниже не исполняется, так как уже пользователю отобразилось сообщение "Это не число"
+  } //если же isValid равен true, то мы блок выше пропустили, значит можно переходить к суммированию наших чисел и ввыводить результат на страничке
+  const btn = document.getElementById('btn'); //нашли нашу кнопку по id - btn
+  const result = document.createElement('div'); //создали новый узел
+  result.setAttribute('id', 'result'); // добавили к нашему узлу id - result
+  result.innerHTML = sum(input1, input2); // на страничке в браузере отобразится сумма двух чисел
+  insertAfter(result, btn); //а эту функцию мы вызываем чтобы сделать связь в dom  дереве, для этого мы и искали узел btn, мы после узла btn приклеиваем наш новый узел с результатом суммы чисел. было html -> body-> div->input
+  //                                                     ->input
+  //                                                     ->btn
+  //стало html -> body-> div->input
+  //                        ->input
+  //                        ->btn
+  //                        ->div c id result
 };
+
 //часть 5. снова все схожее, создать узел, приклеить его к другому узлу
 const initInputs = (container) => {
   //по скольку у нас должно быть 2 поля ввода, то мы для удобства проходимся по циклу(цикл это повторение одних и тех же команд с счетчиком, в нашем примере счетчик от 1 до COUNT_INPUTS, то есть до 2х), мы используем цикл для того чтобы избежать написания одинакового куска кода дважды
