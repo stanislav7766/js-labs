@@ -1,31 +1,29 @@
-import {
-  resFailed,
-  resOK,
-  checkSuccess,
-  applyStyles,
-} from './modules/helpers.js';
+// часть 5
+import { resFailed, resOK, checkSuccess, applyStyles } from './modules/helpers.js';
 import { URL, nodes } from './modules/data.js';
+// мы импортировали наши все модули и кусочки данных
 
 const makeRequest = async (type, url = URL) =>
   new Promise((resolve) => {
+    // в кратце, мы приняли на вход type, это метод для отправки запроса(ты уже прочтитала статью с части 2)
     const request = new XMLHttpRequest();
-    request.open(type, url);
-    request.setRequestHeader(
-      'Content-Type',
-      'application/x-www-form-urlencoded'
-    );
+    request.open(type, url); //отправили запрос с таким то методом на такой то адрес
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     request.addEventListener('readystatechange', () => {
-      request.readyState === 4 &&
-        resolve(checkSuccess(request) ? resOK() : resFailed());
+      //а тут событие , когда прийдет ответ, код ниже исполнится, и там проверка статуса ответа и в зависимости от статуса возвращается такой то объект с текстом и стилями для узла (в части 4 написано)
+      request.readyState === 4 && resolve(checkSuccess(request) ? resOK() : resFailed());
     });
     request.send();
   });
-
+// как открыватся страничка в браузере, первым делом попадаем в код ниже, это асинхронная функция. стоит сказать еще, что в принципе всё взаимодействие с запросами в веб програмировании работает асинхронно, иначе представь, пока мы бы не получили ответ от наших запросов, у нас бы даже могла бы и не загрузится страничка:(
 (async () => {
   await Promise.all(
+    //хорошо, что делается ниже, как помнишь с части 3 мы для удобства написали массив с объектами, и мы по ним асинхронно проходимся(не ждем резултата предыдущего, чтобы сделать что-то новое)
     nodes.map(async ({ method, className }) => {
-      const { text, textStyle } = await makeRequest(method);
-      applyStyles({ className, text, textStyle });
+      const { text, textStyle } = await makeRequest(method); //вызываем еще одну асинхронную функцию makeRequest там отправка запроса идет, ждем ответ какой-то
+      applyStyles({ className, text, textStyle }); //и в зависимости от ответа применяем стили к нужному узлу
     })
   );
+  // хорошо, нужно почитать тебе про промисы и метод all https://learn.javascript.ru/promise
+  // если сильно вкратце, способ управления асинхронным кодом, иногда нужно выполнить действие сразу же как только асинхронная функция исполнилась, с промисами это легко сделать с помощью ключевого слова then или конструкции await
 })();

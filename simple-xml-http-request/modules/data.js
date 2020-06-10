@@ -1,7 +1,9 @@
-export const URL = 'http://cors-test.appspot.com/test';
+// часть 3
+export const URL = 'http://cors-test.appspot.com/test'; //тут расположена ссылка на которую мы будем отправлять запросы, для удобства мы поместили ее в отдельный файлик
 
 export const nodes = [
   { method: 'GET', className: 'get' },
   { method: 'POST', className: 'post' },
   { method: 'WEIRD', className: 'weird' },
 ];
+//так же для удобства мы расположили массив(массив это набор данных) по которому будет как в цикле проходится, будут использоваться тип метода и его же className для идентификации узла в дереве dom, как мы помним по className мы можем находить нужный узел
