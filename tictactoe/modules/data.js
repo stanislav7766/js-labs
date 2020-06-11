@@ -1,8 +1,9 @@
+// текущие состояние игры, хода
 export const State = () => ({
   squares: Array(9).fill(''),
   xIsNext: true,
 });
-
+//массив с выиграшными комбинациями, и также указан тип линии для этой комбинации
 export const WIN_LINES = [
   { indexes: [0, 1, 2], type: 'horizontal' },
   { indexes: [3, 4, 5], type: 'horizontal' },

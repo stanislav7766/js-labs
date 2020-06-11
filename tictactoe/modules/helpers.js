@@ -4,6 +4,7 @@ export const activeBtn = (className) => {
 export const disableBtn = (className) => {
   document.getElementsByClassName(className)[0].disabled = true;
 };
+// функция для изменения className у переданого узла, в данной ситуации при добавлении класса hidden, у нас элемент пропадет со странички
 export const hideElement = (className) => {
   const node = document.getElementsByClassName(className)[0];
   node.className = `${className} hidden`;
