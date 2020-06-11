@@ -1,3 +1,4 @@
+//тут ничего не меняли, все было до нас, в этом файле генерируется наша сетка для игры
 const ROWS_COUNT = 3;
 const COLS_COUNT = 3;
 const field = document.querySelector('.field');
