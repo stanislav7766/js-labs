@@ -62,22 +62,23 @@ const restartBtnListener = () => {
   MakeSync('restart');
   render();
 };
+//вызов этой функции отобразит на странице браузера завершение игры(выигранные квадратики перечеркнуться линией, появитться кнопка рестарт и надпись победителя
 
 const endGame = () => {
-  const node = document.getElementsByClassName('won-title')[0];
-  node.className = 'won-title';
-  const textNode = document.getElementsByClassName('won-message')[0];
-  const status = statusGame();
+  const node = document.getElementsByClassName('won-title')[0];//поиск узла на странице, который всю игру был спрятян(присутствовал className hidden)
+  node.className = 'won-title';//и заменем className на won-title и соответственно hidden пропадет и на странице появится верхняя панелька с рестартом игры и надписью победителя игры 
+  const textNode = document.getElementsByClassName('won-message')[0];//поиск узла, что отвечает за надпись победителя
+  const status = statusGame(); //проверяем статус игры
   textNode.innerHTML =
     status === 2
       ? `It's a draw!`
       : history.state.xIsNext
       ? `Toes won!`
-      : `Crosses won!`;
+      : `Crosses won!`;//и в зависимости от того чей был послелний победный ход(ну или ничья ), отобразим на странице сооветствующую надпись
 
-  if (status === 1) {
+  if (status === 1) {//если игра закончилась победой, а не ничьей, то мы по истории определяем тип линии для зачеркивания квадратов(диагональ, горизонтальная или вертикальная)
     const line = calculateWinner(history.state.squares);
-    line.indexes.forEach((index) => {
+    line.indexes.forEach((index) => {//ну и проходимся по нашим выиграшных квадратиках меняя у нужного узла className, добавляя как раз ту самую линию, и сразу же изменения отображаются на страничке
       const node = document.querySelector(`[data-id="${index}"]`);
       node.className = `${node.className} win ${line.type}`;
     });
